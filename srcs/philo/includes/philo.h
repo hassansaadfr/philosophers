@@ -14,6 +14,7 @@
 
 
 typedef struct s_conf {
+	int					running;
 	long long			nb;
 	unsigned long		die;
 	unsigned long		eat;
@@ -25,12 +26,15 @@ typedef struct s_conf {
 }	t_conf;
 
 typedef struct s_philo {
-	int				id;
-	pthread_t		soul;
-	int				ready;
-	int				alive;
-	int				eat;
-	unsigned long	last_meal;
+	int					id;
+	pthread_t			soul;
+	int					alive;
+	int					eat;
+	unsigned long		last_meal;
+	pthread_mutex_t		meal_check;
+	pthread_mutex_t		alive_check;
+	pthread_mutex_t		eat_check;
+
 	t_conf			*conf;
 }	t_philo;
 

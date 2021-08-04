@@ -30,6 +30,7 @@ void	sleep_time(int time)
 void	print_state(t_philo *philo, pthread_mutex_t *printer, char *state)
 {
 	pthread_mutex_lock(printer);
-	printf("%lld\t%d\t%s\n", elapsed_time(philo->conf->start_time), philo->id + 1, state);
+	if (philo->conf->running)
+		printf("%lld\t%d\t%s\n", elapsed_time(philo->conf->start_time), philo->id + 1, state);
 	pthread_mutex_unlock(printer);
 }

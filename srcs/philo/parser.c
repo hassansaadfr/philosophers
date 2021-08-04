@@ -71,5 +71,6 @@ int	parse(char **argv, t_conf *conf)
 	if (pthread_mutex_init(&conf->printer, NULL))
 		return (print_err(MUTEX_ERROR, 0));
 	conf->start_time = now();
+	conf->running = 1;
 	return (1);
 }

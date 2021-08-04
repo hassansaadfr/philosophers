@@ -7,8 +7,16 @@ void	release_forks(t_philo *philo)
 	right = philo->id + 1;
 	if (right == philo->conf->nb)
 		right = 0;
-	pthread_mutex_unlock(&philo->conf->forks[philo->id]);
-	pthread_mutex_unlock(&philo->conf->forks[right]);
+	if ((philo->id + 1) % 2 == 0)
+	{
+		pthread_mutex_unlock(&philo->conf->forks[right]);
+		pthread_mutex_unlock(&philo->conf->forks[philo->id]);
+	}
+	else
+	{
+		pthread_mutex_unlock(&philo->conf->forks[philo->id]);
+		pthread_mutex_unlock(&philo->conf->forks[right]);
+	}
 }
 
 void	take_forks(t_philo *philo)
@@ -18,32 +26,50 @@ void	take_forks(t_philo *philo)
 	right = philo->id + 1;
 	if (right == philo->conf->nb)
 		right = 0;
-	pthread_mutex_lock(&philo->conf->forks[philo->id]);
-	print_state(philo, &philo->conf->printer, "has taken a fork");
-	pthread_mutex_lock(&philo->conf->forks[right]);
-	print_state(philo, &philo->conf->printer, "has taken a fork");
-	if (!philo->ready)
-		philo->ready = 1;
+	if ((philo->id + 1) % 2 == 0)
+	{
+		pthread_mutex_lock(&philo->conf->forks[philo->id]);
+		print_state(philo, &philo->conf->printer, "has taken a fork");
+		pthread_mutex_lock(&philo->conf->forks[right]);
+		print_state(philo, &philo->conf->printer, "has taken a fork");
+	}
+	else
+	{
+		pthread_mutex_lock(&philo->conf->forks[right]);
+		print_state(philo, &philo->conf->printer, "has taken a fork");
+		pthread_mutex_lock(&philo->conf->forks[philo->id]);
+		print_state(philo, &philo->conf->printer, "has taken a fork");
+	}
 }
 
 void	eating(t_philo *philo)
 {
-	if (philo->alive == 0)
+	if (!philo->alive && !philo->conf->running)
 		return ;
+	pthread_mutex_lock(&philo->meal_check);
 	philo->last_meal = utc_time_in_usec(now());
+	pthread_mutex_unlock(&philo->meal_check);
+	pthread_mutex_lock(&philo->eat_check);
+	philo->eat++;
+	pthread_mutex_unlock(&philo->eat_check);
 	print_state(philo, &philo->conf->printer, "is eating");
 	sleep_time(philo->conf->eat);
-	philo->eat++;
 	release_forks(philo);
 }
 
 void	sleeping_and_thinking(t_philo *philo)
 {
-	if (philo->alive)
+	//
+	int	alive;
+
+	pthread_mutex_lock(&philo->alive_check);
+	alive = philo->alive;
+	pthread_mutex_unlock(&philo->alive_check);
+	if (alive && philo->conf->running)
 	{
 		print_state(philo, &philo->conf->printer, "is sleeping");
 		sleep_time(philo->conf->sleep);
 	}
-	if (philo->alive)
+	if (alive && philo->conf->running)
 		print_state(philo, &philo->conf->printer, "is thinking");
 }

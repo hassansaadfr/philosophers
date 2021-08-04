@@ -19,11 +19,16 @@ t_philo *create_one_philo(int id, t_conf *conf)
 	if (!socrate)
 		return (NULL);
 	socrate->id = id;
-	socrate->ready = 0;
 	socrate->alive = 1;
 	socrate->conf = conf;
 	socrate->eat = 0;
 	socrate->last_meal = 0;
+	if (pthread_mutex_init(&socrate->eat_check, NULL))
+		return (NULL);
+	if (pthread_mutex_init(&socrate->meal_check, NULL))
+		return (NULL);
+	if (pthread_mutex_init(&socrate->alive_check, NULL))
+		return (NULL);
 	return (socrate);
 }
 
@@ -31,7 +36,9 @@ int	create_all_philo(t_conf *conf)
 {
 	t_philo	**philos;
 	int		i;
+	int		eat_count;
 
+	eat_count = 0;
 	philos = malloc(sizeof(t_philo) * conf->nb);
 	i = 0;
 	while (i < conf->nb)
@@ -41,13 +48,19 @@ int	create_all_philo(t_conf *conf)
 			return (free_all_philos(philos, i));
 		if (pthread_create(&philos[i]->soul, NULL, seminary, (void *)philos[i]))
 			return (free_all_philos(philos, i));
-		while (i == 0 && !philos[0]->ready)
-			usleep(100);
+		usleep(100);
 		i++;
 	}
 	i = 0;
 	while (i < conf->nb)
-		pthread_join(philos[i++]->soul, NULL);
+	{
+		pthread_join(philos[i]->soul, NULL);
+		if (philos[i]->eat == conf->eat_nb)
+			eat_count++;
+		i++;
+	}
+	if (eat_count == conf->nb)
+		printf("Each philos eat %lld time\n", conf->eat_nb);
 	return (1);
 }
 

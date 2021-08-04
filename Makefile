@@ -13,7 +13,7 @@ HEAD			=	-I srcs/philo/includes
 
 CC				=	clang
 
-CFLAGS			=	-Wall -Werror -Wextra -g #-fsanitize=thread
+CFLAGS			=	-Wall -Werror -Wextra -g #-g3 -fsanitize=thread
 
 .c.o			:
 					${CC} ${CFLAGS} ${HEAD} -c $< -o ${<:.c=.o}
