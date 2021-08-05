@@ -56,6 +56,7 @@ void				sleeping_and_thinking(t_philo *philo);
 void				*seminary(void *data);
 
 int					create_table(t_conf *conf);
+void				free_table(t_conf *conf);
 
 #endif
 

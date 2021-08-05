@@ -5,6 +5,8 @@ void	release_forks(t_philo *philo)
 	int		right;
 
 	right = philo->id + 1;
+	if (philo->conf->nb == 1)
+		pthread_mutex_unlock(&philo->conf->forks[philo->id]);
 	if (right == philo->conf->nb)
 		right = 0;
 	if ((philo->id + 1) % 2 == 0)
@@ -26,7 +28,15 @@ void	take_forks(t_philo *philo)
 	right = philo->id + 1;
 	if (right == philo->conf->nb)
 		right = 0;
-	if ((philo->id + 1) % 2 == 0)
+	if (philo->conf->nb == 1)
+	{
+		pthread_mutex_lock(&philo->conf->forks[philo->id]);
+		print_state(philo, &philo->conf->printer, "has taken a fork");
+		pthread_mutex_lock(&philo->meal_check);
+		philo->last_meal = utc_time_in_usec(now());
+		pthread_mutex_unlock(&philo->meal_check);
+	}
+	else if ((philo->id + 1) % 2 == 0)
 	{
 		pthread_mutex_lock(&philo->conf->forks[philo->id]);
 		print_state(philo, &philo->conf->printer, "has taken a fork");
@@ -59,12 +69,13 @@ void	eating(t_philo *philo)
 
 void	sleeping_and_thinking(t_philo *philo)
 {
-	//
 	int	alive;
 
 	pthread_mutex_lock(&philo->alive_check);
 	alive = philo->alive;
 	pthread_mutex_unlock(&philo->alive_check);
+	if (philo->conf->nb == 1)
+		return ;
 	if (alive && philo->conf->running)
 	{
 		print_state(philo, &philo->conf->printer, "is sleeping");

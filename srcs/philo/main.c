@@ -11,6 +11,7 @@ int	main(int argc, char **argv)
 			return (1);
 		if (!create_table(&conf))
 			return (0);
+		free_table(&conf);
 	}
 	else
 		return (print_err(INVALID_ARGS, 1));

@@ -21,7 +21,7 @@ void	*purgatory(void *data)
 			pthread_mutex_lock(&socrate->alive_check);
 			socrate->alive = 0;
 			pthread_mutex_unlock(&socrate->alive_check);
-			if (eat < socrate->conf->eat_nb)
+			if (eat < socrate->conf->eat_nb || socrate->conf->eat_nb == -1)
 			{
 				print_state(socrate, &socrate->conf->printer, "died");
 				socrate->conf->running = 0;
@@ -44,8 +44,13 @@ void	*seminary(void *data)
 	while (socrate->alive && socrate->conf->running)
 	{
 		take_forks(socrate);
-		eating(socrate);
-		sleeping_and_thinking(socrate);
+		if (socrate->conf->nb > 1)
+		{
+			eating(socrate);
+			sleeping_and_thinking(socrate);
+		}
+		else
+			sleep_time(socrate->conf->eat);
 	}
 	pthread_join(hades, NULL);
 	return (NULL);

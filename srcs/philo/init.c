@@ -61,6 +61,7 @@ int	create_all_philo(t_conf *conf)
 	}
 	if (eat_count == conf->nb)
 		printf("Each philos eat %lld time\n", conf->eat_nb);
+	free_all_philos(philos, conf->nb);
 	return (1);
 }
 
@@ -82,4 +83,9 @@ int	create_table(t_conf *conf)
 	}
 	conf->forks = forks;
 	return (create_all_philo(conf));
+}
+
+void	free_table(t_conf *conf)
+{
+	free(conf->forks);
 }
