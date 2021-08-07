@@ -70,6 +70,8 @@ int	parse(char **argv, t_conf *conf)
 		return (print_err(PARSING_ISSUE, 0));
 	if (pthread_mutex_init(&conf->printer, NULL))
 		return (print_err(MUTEX_ERROR, 0));
+	if (pthread_mutex_init(&conf->running_check, NULL))
+		return (print_err(MUTEX_ERROR, 0));
 	conf->start_time = now();
 	conf->running = 1;
 	return (1);
