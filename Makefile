@@ -2,6 +2,7 @@ NAME			=	philo
 
 SRCS			=	philo/main.c \
 					philo/philo.c \
+					philo/routine.c \
 					philo/actions.c \
 					philo/init.c \
 					philo/parser.c \

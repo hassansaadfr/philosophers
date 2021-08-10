@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hsaadaou <hsaadaou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/10 19:49:56 by hsaadaou          #+#    #+#             */
+/*   Updated: 2021/08/10 20:01:06 by hsaadaou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 
 # define PHILO_H
@@ -11,7 +23,6 @@
 # define INVALID_ARGS "Invalid args."
 # define MUTEX_ERROR "Error during mutex initialisation."
 # define PARSING_ISSUE "Bad arguments."
-
 
 typedef struct s_conf {
 	int					running;
@@ -57,9 +68,9 @@ void				sleeping_and_thinking(t_philo *philo);
 void				*seminary(void *data);
 
 int					create_table(t_conf *conf);
-void				free_table(t_conf *conf);
 
 int					is_alive(t_philo *philo);
 int					is_running(t_philo *philo);
+void				*purgatory(void *data);
 
 #endif

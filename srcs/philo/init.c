@@ -1,4 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hsaadaou <hsaadaou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/10 19:49:40 by hsaadaou          #+#    #+#             */
+/*   Updated: 2021/08/10 20:15:47 by hsaadaou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
+
+void	wait_monitors(t_philo **philos, t_conf *conf)
+{
+	int		i;
+	int		eat_count;
+
+	i = 0;
+	eat_count = 0;
+	while (i < conf->nb)
+	{
+		pthread_join(philos[i]->soul, NULL);
+		if (philos[i]->eat == conf->eat_nb)
+			eat_count++;
+		i++;
+	}
+	if (eat_count == conf->nb)
+		printf("Each philos eat %lld time\n", conf->eat_nb);
+}
 
 int	free_all_philos(t_philo **philos, int nb)
 {
@@ -11,9 +41,9 @@ int	free_all_philos(t_philo **philos, int nb)
 	return (0);
 }
 
-t_philo *create_one_philo(int id, t_conf *conf)
+t_philo	*create_one_philo(int id, t_conf *conf)
 {
-	t_philo *socrate;
+	t_philo	*socrate;
 
 	socrate = malloc(sizeof(t_philo));
 	if (!socrate)
@@ -52,15 +82,7 @@ int	create_all_philo(t_conf *conf)
 		i++;
 	}
 	i = 0;
-	while (i < conf->nb)
-	{
-		pthread_join(philos[i]->soul, NULL);
-		if (philos[i]->eat == conf->eat_nb)
-			eat_count++;
-		i++;
-	}
-	if (eat_count == conf->nb)
-		printf("Each philos eat %lld time\n", conf->eat_nb);
+	wait_monitors(philos, conf);
 	free_all_philos(philos, conf->nb);
 	return (1);
 }
@@ -83,9 +105,4 @@ int	create_table(t_conf *conf)
 	}
 	conf->forks = forks;
 	return (create_all_philo(conf));
-}
-
-void	free_table(t_conf *conf)
-{
-	free(conf->forks);
 }

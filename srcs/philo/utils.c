@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hsaadaou <hsaadaou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/10 19:49:49 by hsaadaou          #+#    #+#             */
+/*   Updated: 2021/08/10 19:50:55 by hsaadaou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 long long int	utc_time_in_usec(struct timeval time)
@@ -31,6 +43,7 @@ void	print_state(t_philo *philo, pthread_mutex_t *printer, char *state)
 {
 	pthread_mutex_lock(printer);
 	if (is_running(philo))
-		printf("%lld\t%d\t%s\n", elapsed_time(philo->conf->start_time), philo->id + 1, state);
+		printf("%lld\t%d\t%s\n",
+			elapsed_time(philo->conf->start_time), philo->id + 1, state);
 	pthread_mutex_unlock(printer);
 }
