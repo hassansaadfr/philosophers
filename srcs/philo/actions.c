@@ -71,7 +71,6 @@ void	eating(t_philo *philo)
 	pthread_mutex_unlock(&philo->eat_check);
 	print_state(philo, &philo->conf->printer, "is eating");
 	sleep_time(philo->conf->eat);
-	release_forks(philo);
 }
 
 void	sleeping_and_thinking(t_philo *philo)

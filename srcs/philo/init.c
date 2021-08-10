@@ -22,7 +22,7 @@ t_philo *create_one_philo(int id, t_conf *conf)
 	socrate->alive = 1;
 	socrate->conf = conf;
 	socrate->eat = 0;
-	socrate->last_meal = 0;
+	socrate->last_meal = utc_time_in_usec(now());
 	if (pthread_mutex_init(&socrate->eat_check, NULL))
 		return (NULL);
 	if (pthread_mutex_init(&socrate->meal_check, NULL))

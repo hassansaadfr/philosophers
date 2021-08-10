@@ -37,24 +37,31 @@ void	*purgatory(void *data)
 	{
 		alive = is_alive(socrate);
 		running = is_running(socrate);
-		pthread_mutex_lock(&socrate->eat_check);
-		eat = socrate->eat;
-		pthread_mutex_unlock(&socrate->eat_check);
 		pthread_mutex_lock(&socrate->meal_check);
 		last_meal = socrate->last_meal;
 		pthread_mutex_unlock(&socrate->meal_check);
-		if (eat > 0 && (utc_time_in_usec(now()) - last_meal > socrate->conf->die || (eat >= socrate->conf->eat_nb && socrate->conf->eat_nb != -1)))
+		if (socrate->conf->eat_nb != -1)
+		{
+			pthread_mutex_lock(&socrate->eat_check);
+			eat = socrate->eat;
+			pthread_mutex_unlock(&socrate->eat_check);
+			if (eat == socrate->conf->eat_nb - 1)
+			{
+				pthread_mutex_lock(&socrate->alive_check);
+				socrate->alive = 0;
+				pthread_mutex_unlock(&socrate->alive_check);
+				break ;
+			}
+		}
+		if ((utc_time_in_usec(now()) - last_meal > socrate->conf->die))
 		{
 			pthread_mutex_lock(&socrate->alive_check);
 			socrate->alive = 0;
 			pthread_mutex_unlock(&socrate->alive_check);
-			if (eat < socrate->conf->eat_nb || socrate->conf->eat_nb == -1)
-			{
-				print_state(socrate, &socrate->conf->printer, "died");
-				pthread_mutex_lock(&socrate->conf->running_check);
-				socrate->conf->running = 0;
-				pthread_mutex_unlock(&socrate->conf->running_check);
-			}
+			print_state(socrate, &socrate->conf->printer, "died");
+			pthread_mutex_lock(&socrate->conf->running_check);
+			socrate->conf->running = 0;
+			pthread_mutex_unlock(&socrate->conf->running_check);
 			break ;
 		}
 		usleep(100);
@@ -79,13 +86,9 @@ void	*seminary(void *data)
 		alive = is_alive(socrate);
 		running = is_running(socrate);
 		take_forks(socrate);
-		if (socrate->conf->nb > 1)
-		{
-			eating(socrate);
-			sleeping_and_thinking(socrate);
-		}
-		else
-			sleep_time(socrate->conf->eat);
+		eating(socrate);
+		release_forks(socrate);
+		sleeping_and_thinking(socrate);
 	}
 	pthread_join(hades, NULL);
 	return (NULL);
